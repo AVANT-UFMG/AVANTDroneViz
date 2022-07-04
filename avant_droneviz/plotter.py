@@ -8,15 +8,16 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation as ani
 from mpl_toolkits import mplot3d
+import pandas as pd
+from matplotlib.animation import FuncAnimation
 
+def plot_motion(file_path: str,key1: str, key2: str): #file path should be 'velocidades.csv'
+    plt.style.use('seaborn')
+    fig1, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
+    ani1 = FuncAnimation(fig1, animate(file_path, ax1, ax2, key1,key2), interval=1000)
+    plt.tight_layout()
+    plt.show()
 
-# TODO
-def plot_vel():
-    pass
-
-# TODO
-def plot_accel():
-    pass
 
 # TODO
 def plot_obstacles():
@@ -65,6 +66,21 @@ def plot_odom(file_path: str, dim: int, title: str = 'Odometry', keep: int = 10,
         ax.scatter3d(data_arr[0], data_arr[1], data_arr[2], 'red')
         plt.show()
 
+def animate(file_path,ax1,ax2,key1, key2):
+    file = pd.read_csv(file_path)
+    linear = file[key1]
+    angular = file[key2]
+
+    ax1.cla()
+    ax2.cla()
+
+    ax1.plot(linear, label = key1)
+    ax2.plot(angular, label = key2)
+
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper left')
+
+    ax2.set_xlabel('Tempo')
 
 def __animate(i, file_path, title, label: str):
     data = __read_csv(file_path)
@@ -119,4 +135,3 @@ def __read_csv(path: str, save_all: bool = False) -> list:
         print('Error reading file {}: {}'.format(path, str(e)))
 
     return np.array(data, dtype=np.float32)
-
